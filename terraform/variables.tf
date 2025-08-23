@@ -31,5 +31,5 @@ variable "cluster_version" {
 
 }
 variable "cluster_security_group_id" {
-  default = null
+  default = "sg-0c149080f69cc1b40"
 }
