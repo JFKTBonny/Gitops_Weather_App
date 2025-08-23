@@ -102,9 +102,7 @@ jobs:
         with:
           name: weather-app-tf
 
-      - name: copy weather-app-tf.plan  in terraform   Directory
-        run: cd $GITHUB_WORKSPACE && cp weather-app-tf.plan ./terraform
-
+      
       - name: Apply Terraform Plan
         run: cp $GITHUB_WORKSPACE/weather-tf-plan/weather-app-tf.plan $GITHUB_WORKSPACE/terraform/
         working-directory: ${{ github.workspace }}/terraform              
