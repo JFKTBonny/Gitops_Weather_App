@@ -55,7 +55,7 @@ jobs:
       - name: Download plan and lock
         uses: actions/download-artifact@v4
         with:
-          name: weather-tf-plan
+          name: weather-app-tf.plan
 
       - name: Restore Terraform lock file
         run: cp ./terraform/.terraform.lock.hcl ./terraform/.terraform.lock.hcl  
