@@ -100,7 +100,7 @@ jobs:
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
-          name: weather-app-tf
+          name: weather-app-tf.plan
 
       
       - name: Apply Terraform Plan
