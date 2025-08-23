@@ -96,9 +96,11 @@ jobs:
         working-directory: ./terraform
 
       - name: Download Terraform Plan
-        uses: actions/download-artifact@v4
+        uses: aochmann/actions-download-artifact@1.0.0
         with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
           name: weather-tf-plan
+          path: Gitops_Weather_App/terraform
 
       - name: List Files in Directory
         run: ls -la ./terraform
