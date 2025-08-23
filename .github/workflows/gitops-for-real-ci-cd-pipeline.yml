@@ -70,7 +70,7 @@ jobs:
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: weather-tf.plan
+          name: weather-app-tf.plan
           path: ./terraform/weather-app-tf.plan
           
   terraform-apply:
