@@ -64,8 +64,8 @@ jobs:
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: weather-app-tf
-          path: ./terraform/weather-app-tf/weather-app-tf.plan
+          name: weather-app-tf.plan
+          
 
   terraform-apply:
     name: 'Terraform Apply'
@@ -104,5 +104,5 @@ jobs:
 
       
       - name: Apply Terraform Plan
-        run: cp $GITHUB_WORKSPACE/weather-tf-plan/weather-app-tf.plan $GITHUB_WORKSPACE/terraform/
+        run: cd  $GITHUB_WORKSPACE  &&  cp weather-app-tf.plan  ./terraform/
         working-directory: ${{ github.workspace }}/terraform              
