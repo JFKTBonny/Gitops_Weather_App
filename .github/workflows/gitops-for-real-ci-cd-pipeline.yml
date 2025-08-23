@@ -58,7 +58,7 @@ jobs:
           name: weather-app-tf.plan
           path: ./terraform/weather-app-tf.plan
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          if-no-files-found: error
+          
 
       - name: Restore Terraform lock file
         run: cp ./terraform/.terraform.lock.hcl ./terraform/.terraform.lock.hcl  
