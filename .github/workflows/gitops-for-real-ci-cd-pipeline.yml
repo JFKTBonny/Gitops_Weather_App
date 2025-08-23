@@ -52,4 +52,11 @@ jobs:
         run: terraform plan -detailed-exitcode -no-color -out weather-app-tf.plan
         working-directory: ./terraform  
 
-        
+      - name: Download plan and lock
+        uses: actions/download-artifact@v4
+        with:
+          name: weather-tf-plan
+
+      - name: Restore Terraform lock file
+        run: cp ./terraform/.terraform.lock.hcl ./terraform/.terraform.lock.hcl  
+
