@@ -48,6 +48,18 @@ jobs:
             --reconfigure
         working-directory: ./terraform
 
+      - name: Terraform Plan
+        id: tf-plan
+        run: |
+          terraform plan -detailed-exitcode -no-color -out weather-app-tf.plan || exit $?
+        working-directory: ./terraform
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: weather-tf-plan
+          path: ./terraform/weather-app-tf.plan  
+
       # Terraform Plan
       - name: Terraform Plan
         id: tf-plan      
@@ -73,47 +85,30 @@ jobs:
           path: ./terraform/weather-app-tf.plan
           
   terraform-apply:
-    name: 'Terraform Apply'
+    name: Terraform Apply
     runs-on: ubuntu-latest
-    needs: [terraform-plan]
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    needs: terraform-plan
 
-      # Configure AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.8.3
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
-      - name: Terraform apply
-        run: |
-          terraform apply \
-            -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
-            -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
-            -backend-config="region=${{ secrets.AWS_REGION }}" \
-            --reconfigure
-        working-directory: ./terraform
-
-      # Download plan
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
           name: weather-tf-plan
 
-      - name: Copy Terraform Plan
-        run: cp ./weather-app-tf.plan ./terraform/weather-app-tf.plan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve weather-app-tf.plan
+      - name: Apply Terraform Plan
+        run: terraform apply -auto-approve ./terraform/weather-app-tf.plan
         working-directory: ./terraform
 
   docker-build-and-push:
