@@ -81,11 +81,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check Terraform version and PATH
-        run: |
-          terraform version
-          echo $PATH
-
+      
       # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
