@@ -21,5 +21,5 @@ resource "aws_eks_node_group" "gitops_node_group" {
     Name = "gitops-${var.environment}-workers-nodes"
   }
 
-  depends_on = [aws_iam_role.worker_nodes_role]
+  depends_on = [aws_iam_role.worker_nodes_role, aws_eks_cluster.gitops_eks]
 }
