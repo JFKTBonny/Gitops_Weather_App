@@ -101,4 +101,8 @@ jobs:
           name: weather-app-tf.plan
 
       - name: List Files in Directory
-        run: ls -la ./terraform             
+        run: ls -la ./terraform 
+
+      - name: Apply Terraform Plan
+        run: terraform apply -auto-approve ./terraform/weather-app-tf.plan
+        working-directory: ./terraform              
