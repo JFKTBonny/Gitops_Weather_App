@@ -68,10 +68,17 @@ jobs:
 
       # Upload plan as artifact
       - name: Publish Terraform Plan
-        uses: actions/upload-artifact@v4
+        # uses: actions/upload-artifact@v4
+        # with:
+        #   name: weather-app-tf.plan
+        #   path: ./terraform/weather-app-tf.plan
+
+        uses: Shopify/upload-to-release@v1
         with:
           name: weather-app-tf.plan
           path: ./terraform/weather-app-tf.plan
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          content-type: text/plain # Optional
           
   terraform-apply:
     name: 'Terraform Apply'
