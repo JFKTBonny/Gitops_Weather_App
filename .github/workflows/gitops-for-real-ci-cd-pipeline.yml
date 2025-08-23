@@ -23,11 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # Checkout code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -35,13 +33,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.8.3        
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
-      # Terraform Init with backend config
       - name: Terraform Init
         run: |
           terraform init \
@@ -51,12 +47,11 @@ jobs:
             --reconfigure
         working-directory: ./terraform
 
-     # Terraform Plan step
       - name: Terraform Plan
         id: tf-plan      
         run: |
           export exitcode=0
-          terraform plan -detailed-exitcode -no-color -out=weather-app-tf.plan || export exitcode=$?        
+          terraform plan -detailed-exitcode -no-color -out=weather-app-tf.plan || export exitcode=$?
           echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
           if [ $exitcode -eq 1 ]; then
             echo "Terraform Plan Failed!"
@@ -64,68 +59,53 @@ jobs:
           fi
         working-directory: ./terraform
 
-      # Upload plan as artifact (using official upload action with simple name)
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
         with:
-          name: weather-tf-plan         # simple artifact name, no dots
-          path: ./terraform/weather-app-tf.plan # Terraform Plan step
-      - name: Terraform Plan
-        id: tf-plan      
-        run: |
-          export exitcode=0
-          terraform plan -detailed-exitcode -no-color -out=weather-app-tf.plan || export exitcode=$?        
-          
-          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
-          
-          if [ $exitcode -eq 1 ]; then
-            echo "Terraform Plan Failed!"
-            exit 1
-          fi
-        working-directory: ./terraform
-
-      # Upload plan as artifact
-      - name: Publish Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: weather-app-tf.plan
+          name: weather-tf-plan
           path: ./terraform/weather-app-tf.plan
 
-        
-          
   terraform-apply:
-  name: 'Terraform Apply'
-  runs-on: ubuntu-latest
-  needs: [terraform-plan]
-  
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    name: 'Terraform Apply'
+    runs-on: ubuntu-latest
+    needs: [terraform-plan]
 
-    # Configure AWS credentials
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-    # Download plan artifact with same name as uploaded
-    - name: Download Terraform Plan
-      uses: actions/download-artifact@v4
-      with:
-        name: weather-tf-plan
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
-    - name: List Files in Directory
-      run: ls -la ./terraform
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
+            -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+            -backend-config="region=${{ secrets.AWS_REGION }}" \
+            --reconfigure
+        working-directory: ./terraform
 
-    - name: Apply Terraform Plan
-      run: terraform apply -auto-approve ./terraform/weather-app-tf.plan
-      working-directory: ./terraform
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: weather-tf-plan
+
+      - name: List Files in Directory
+        run: ls -la ./terraform
+
+      - name: Apply Terraform Plan
+        run: terraform apply -auto-approve ./terraform/weather-app-tf.plan
+        working-directory: ./terraform
 
   docker-build-and-push:
     name: 'Build and Push Docker Image'
@@ -194,7 +174,7 @@ jobs:
 
       - name: Setup ArgoCD
         run: |
-          cd ./Step-01/scripts
+          cd ./scripts
 
           curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
