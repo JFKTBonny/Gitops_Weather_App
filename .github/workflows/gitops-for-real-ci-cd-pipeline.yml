@@ -72,35 +72,36 @@ jobs:
           name: weather-tf-plan
           path: ./terraform/weather-app-tf.plan
           
-  terraform-apply:
-    name: 'Terraform Apply'
-    runs-on: ubuntu-latest
-    needs: [terraform-plan]
+  # terraform-apply:
+  #   name: 'Terraform Apply'
+  #   runs-on: ubuntu-latest
+  #   needs: [terraform-plan]
     
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      # Configure AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+  #     # Configure AWS credentials
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.8.3
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v3
+  #       with:
+  #         terraform_version: 1.8.3
 
-      - name: Terraform Init
-        run: terraform init \
-          -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
-          -backend-config="key=${{ env.BACKEND_KEY }}" \
-          -backend-config="region=${{ secrets.AWS_REGION }}" \
-          --reconfigure
-        working-directory: ./Step-01/terraform
+  #     - name: Terraform apply
+  #       run: |
+  #         terraform apply \
+  #           -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
+  #           -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+  #           -backend-config="region=${{ secrets.AWS_REGION }}" \
+  #           --reconfigure
+  #       working-directory: ./terraform
 
       # Download plan
       - name: Download Terraform Plan
