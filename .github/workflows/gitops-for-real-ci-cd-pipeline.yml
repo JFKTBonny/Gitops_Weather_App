@@ -12,6 +12,10 @@ on:
     paths-ignore:
       - './deployment/**'
 
+env:
+  ENVIRONMENT: dev
+  
+
 jobs:
   terraform-plan:
     name: 'Terraform Plan'
