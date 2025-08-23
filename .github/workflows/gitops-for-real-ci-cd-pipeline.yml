@@ -38,6 +38,8 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
 
+        
+
       - name: Terraform Init
         run: |
           terraform init \
@@ -45,7 +47,7 @@ jobs:
             -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
             -backend-config="region=${{ secrets.AWS_REGION }}" \
             --reconfigure
-        working-directory: ./terraform
+        working-directory: ${{ github.workspace }}/terraform
 
       - name: Terraform Plan
         id: tf-plan      
@@ -57,7 +59,7 @@ jobs:
             echo "Terraform Plan Failed!"
             exit 1
           fi
-        working-directory: ./terraform
+        working-directory: ${{ github.workspace }}/terraform
 
       - name: Publish Terraform Plan
         uses: actions/upload-artifact@v4
@@ -93,7 +95,7 @@ jobs:
             -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
             -backend-config="region=${{ secrets.AWS_REGION }}" \
             --reconfigure
-        working-directory: ./terraform
+        working-directory: ${{ github.workspace }}/terraform
 
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
@@ -104,5 +106,5 @@ jobs:
         run: ls -la ./terraform 
 
       - name: Apply Terraform Plan
-        run: terraform apply -auto-approve ./terraform/weather-app-tf.plan
-        working-directory: ./terraform              
+        run: terraform apply -auto-approve ${{ github.workspace }}/terraform/weather-app-tf.plan
+        working-directory: ${{ github.workspace }}/terraform              
