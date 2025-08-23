@@ -30,3 +30,6 @@ variable "cluster_version" {
   default = "1.30"
 
 }
+variable "cluster_security_group_id" {
+  
+}
