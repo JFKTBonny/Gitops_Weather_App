@@ -27,3 +27,15 @@ resource "aws_security_group_rule" "kube_port" {
   security_group_id = var.cluster_security_group_id
 }
 
+resource "aws_security_group" "cluster_sg" {
+  name        = "cluster-sg"
+  description = "Security group for cluster"
+  vpc_id      = aws_vpc.gitops_vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
