@@ -57,7 +57,7 @@ jobs:
         with:
           name: weather-app-tf.plan
           path: ./terraform/weather-app-tf.plan
-          overwrite: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           if-no-files-found: error
 
       - name: Restore Terraform lock file
