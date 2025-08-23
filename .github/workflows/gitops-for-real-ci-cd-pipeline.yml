@@ -14,6 +14,7 @@ on:
 
 env:
   ENVIRONMENT: dev
+  TERRAFORM_VERSION: 1.8.3
   
 
 jobs:
@@ -90,23 +91,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      
+      # Download plan artifact
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.8.3
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
-      # Download plan artifact
       - name: Download Terraform Plan
         uses: actions/download-artifact@v4
         with:
           name: weather-tf-plan
 
-      # Copy plan to terraform folder
-      - name: Copy Terraform Plan
-        run: cp ./weather-app-tf.plan ./terraform/weather-app-tf.plan
-
-      # Apply Terraform Plan
-      - name: Terraform Apply
-        run: terraform apply -auto-approve weather-app-tf.plan
+      - name: Apply Terraform Plan
+        run: terraform apply -auto-approve ./terraform/weather-app-tf.plan
         working-directory: ./terraform
 
   docker-build-and-push:
