@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: weather-app-backend-api
-        image: santonix/weather-app-backend-api:v025273fd6b6b83d23f70387b1170c36ad2b03189
+        image: santonix/weather-app-backend-api:v1c91e1fa165e3677dd02f266a7e3624ad402bac3
         imagePullPolicy: Always       # Forces Kubernetes to always pull the image
         ports:
         - containerPort: 80
