@@ -199,12 +199,12 @@ jobs:
 
           argocd login $EXTERNAL_IP --username admin --password $ARGO_CD_PASSWORD --insecure
 
-          argocd repo add https://github.com/pietrolibro/gitops-for-real-world.git \
+          argocd repo add https://github.com/JFKTBonny/Gitops_Weather_App.git \
             --username ${{ secrets.REPO_USER }} \
             --password ${{ secrets.REPO_TOKEN }}
 
       - name: Deploy ArgoCD Application
         run: |
-          cd ./Step-01/ArgoCD-GitOps
+          cd ./ArgoCD-GitOps
           kubectl create namespace weather-app-for-real --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -f argocd_deployment.yaml
