@@ -4,7 +4,7 @@
 SERVICE_NAME="argocd-server"
 NAMESPACE="argocd"
 
-# Initialize external IP
+# # Initialize external IP
 export EXTERNAL_IP=""
 
 # Loop until the external IP is assigned
