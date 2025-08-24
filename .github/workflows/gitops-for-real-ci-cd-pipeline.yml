@@ -164,15 +164,15 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      # Configure kubeconfig for EKS
-      - name: Update kubeconfig for EKS
-        run: aws eks update-kubeconfig \
-              --name gitops-${{ secrets.ENVIRONMENT }}-eks \
-              --region ${{ secrets.AWS_REGION }}
+      # # Configure kubeconfig for EKS
+      # - name: Update kubeconfig for EKS
+      #   run: aws eks update-kubeconfig \
+      #         --name gitops-${{ env.ENVIRONMENT }}-cluster \
+      #         --region ${{ secrets.AWS_REGION }}
 
       # Fixed: environment is set as a normal secret, used here correctly
       - name: Update kubeconfig for EKS
-        run: aws eks update-kubeconfig --name gitops-${{ secrets.ENVIRONMENT }}-eks --region ${{ secrets.AWS_REGION }}
+        run: aws eks update-kubeconfig --name gitops-${{ env.ENVIRONMENT }}-cluster --region ${{ secrets.AWS_REGION }}
 
       - name: Setup ArgoCD
         run: |
