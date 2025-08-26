@@ -10,7 +10,7 @@ resource "aws_eks_cluster" "eks-cluster" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
     ignore_changes  = [tags] # ignore size changes if you scale outside Terraform
   }
 

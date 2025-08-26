@@ -17,7 +17,7 @@ resource "aws_eks_node_group" "eks-cluster-node-group" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
     ignore_changes  = [scaling_config] # ignore size changes if you scale outside Terraform
   }
 
