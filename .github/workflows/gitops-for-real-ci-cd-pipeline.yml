@@ -149,62 +149,62 @@ jobs:
 
       
 
-  # argo-cd-deployment:
-  #   name: 'Setup ArgoCD on EKS'
-  #   runs-on: ubuntu-latest
-  #   needs: [docker-build-and-push, terraform-apply]
+  argo-cd-deployment:
+    name: 'Setup ArgoCD on EKS'
+    runs-on: ubuntu-latest
+    needs: [docker-build-and-push, terraform-apply]
 
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-  #     - name: Setup kubectl and plugins
+      - name: Setup kubectl and plugins
 
-  #       uses: marcofranssen/setup-kubectl@v1.3.0
+        uses: marcofranssen/setup-kubectl@v1.3.0
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ secrets.AWS_REGION }}   
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}   
 
-  #     # # Configure kubeconfig for EKS
-  #     # - name: Update kubeconfig for EKS
-  #     #   run: aws eks update-kubeconfig \
-  #     #         --name gitops-${{ env.ENVIRONMENT }}-cluster \
-  #     #         --region ${{ secrets.AWS_REGION }}
+      # # Configure kubeconfig for EKS
+      # - name: Update kubeconfig for EKS
+      #   run: aws eks update-kubeconfig \
+      #         --name gitops-${{ env.ENVIRONMENT }}-cluster \
+      #         --region ${{ secrets.AWS_REGION }}
 
-  #     # Fixed: environment is set as a normal secret, used here correctly
-  #     - name: Update kubeconfig for EKS
-  #       run: aws eks update-kubeconfig --name gitops-${{ env.ENVIRONMENT }}-cluster --region ${{ secrets.AWS_REGION }}
+      # Fixed: environment is set as a normal secret, used here correctly
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name gitops-${{ env.ENVIRONMENT }}-cluster --region ${{ secrets.AWS_REGION }}
 
-  #     - name: Setup ArgoCD
-  #       run: |
-  #         cd ./scripts
+      - name: Setup ArgoCD
+        run: |
+          cd ./scripts
 
-  #         curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-  #         sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-  #         rm argocd-linux-amd64
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+          rm argocd-linux-amd64
 
-  #         kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-  #         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-  #         kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+          kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
-  #         chmod +x get-argo-cd-external-ip.sh
-  #         source get-argo-cd-external-ip.sh
+          chmod +x get-argo-cd-external-ip.sh
+          source get-argo-cd-external-ip.sh
 
-  #         chmod +x get-argo-cd-initial-password.sh
-  #         source get-argo-cd-initial-password.sh
+          chmod +x get-argo-cd-initial-password.sh
+          source get-argo-cd-initial-password.sh
 
-  #         argocd login $EXTERNAL_IP --username admin --password $ARGO_CD_PASSWORD --insecure
+          argocd login $EXTERNAL_IP --username admin --password $ARGO_CD_PASSWORD --insecure
 
-  #         argocd repo add https://github.com/JFKTBonny/Gitops_Weather_App.git \
-  #           --username ${{ secrets.REPO_USER }} \
-  #           --password ${{ secrets.REPO_TOKEN }}
+          argocd repo add https://github.com/JFKTBonny/Gitops_Weather_App.git \
+            --username ${{ secrets.REPO_USER }} \
+            --password ${{ secrets.REPO_TOKEN }}
 
-  #     - name: Deploy ArgoCD Application
-  #       run: |
-  #         cd ./ArgoCD-GitOps
-  #         kubectl create namespace weather-app-for-real --dry-run=client -o yaml | kubectl apply -f -
-  #         kubectl apply -f argocd_deployment.yaml
+      - name: Deploy ArgoCD Application
+        run: |
+          cd ./ArgoCD-GitOps
+          kubectl create namespace weather-app-for-real --dry-run=client -o yaml | kubectl apply -f -
+          kubectl apply -f argocd_deployment.yaml
