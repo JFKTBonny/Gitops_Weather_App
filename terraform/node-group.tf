@@ -16,6 +16,11 @@ resource "aws_eks_node_group" "eks-cluster-node-group" {
     max_unavailable = 1
   }
 
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [scaling_config] # ignore size changes if you scale outside Terraform
+  }
+
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
   depends_on = [

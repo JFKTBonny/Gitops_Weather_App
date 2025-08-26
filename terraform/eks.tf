@@ -9,6 +9,11 @@ resource "aws_eks_cluster" "eks-cluster" {
     endpoint_public_access = "true"
   }
 
+  lifecycle {
+    prevent_destroy = true
+    ignore_changes  = [tags] # ignore size changes if you scale outside Terraform
+  }
+
   depends_on = [
     aws_iam_role_policy_attachment.eks-policy-cluster-attachment,
     aws_iam_role_policy_attachment.eks-policy-cluster-attach,
