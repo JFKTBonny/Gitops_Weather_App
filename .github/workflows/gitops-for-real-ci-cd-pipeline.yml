@@ -135,7 +135,7 @@ jobs:
         with:
           push: true
           context: .
-          file: Dockerfile            # # Capitalized filename "Dockerfile"
+          file: Dockerfile           # # # Capitalized filename "Dockerfile"
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:v${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:cache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:cache,mode=max
