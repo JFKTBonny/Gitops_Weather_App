@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/JFKTBonny/Gitops_Weather_App.git   # <-- change this
+    repoURL: https://github.com/JFKTBonny/Gitops_Weather_App.git   # #<-- change this
     targetRevision: main
     path: deployment                                               # <-- adjust if manifests are in a folder
   destination:
