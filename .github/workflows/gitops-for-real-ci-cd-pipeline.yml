@@ -154,7 +154,7 @@ jobs:
   argo-cd-deployment:
     name: 'Setup ArgoCD on EKS'
     runs-on: ubuntu-latest
-    needs: [docker-build-and-push, terraform-apply]
+    # needs: [docker-build-and-push, terraform-apply]
 
     steps:
       - name: Checkout Code
