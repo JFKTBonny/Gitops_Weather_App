@@ -34,7 +34,7 @@ resource "aws_eks_node_group" "eks-cluster-node-group" {
 
 
 
-# for the workers nodes,we must create an iam role to attach to: AmazonEKSWorkerNodePolicy, AmazonEKS_CNI_Policy, AmazonEC2ContainerRegistryReadOnly
+# # for the workers nodes,we must create an iam role to attach to: AmazonEKSWorkerNodePolicy, AmazonEKS_CNI_Policy, AmazonEC2ContainerRegistryReadOnly
 resource "aws_iam_role" "eks-worker-role" {
   name = "eks-worker-role"
 
