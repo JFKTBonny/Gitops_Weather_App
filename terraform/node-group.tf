@@ -27,7 +27,7 @@ resource "aws_eks_node_group" "eks-cluster-node-group" {
     aws_iam_role_policy_attachment.worker-node-policy,
     aws_iam_role_policy_attachment.worker-node-cni,
     aws_iam_role_policy_attachment.worker-node-ecr,
-    aws_eks_cluster.eks-cluster,
+    
 
   ]
 }
