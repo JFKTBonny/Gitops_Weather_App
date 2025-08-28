@@ -106,7 +106,7 @@ jobs:
 
       
       - name: Apply Terraform Plan
-        run: terraform destroy    -auto-approve # ${{ github.workspace }}/terraform/weather-app-tf.plan
+        run: terraform apply    -auto-approve # ${{ github.workspace }}/terraform/weather-app-tf.plan
         working-directory: ${{ github.workspace }}/terraform
 
   docker-build-and-push:
