@@ -9,7 +9,7 @@ SECRET_NAME="argocd-initial-admin-secret"
 # # Initialize ARGO_CD_PASSWORD variable
 ARGO_CD_PASSWORD=""
 
-# Function to get the Argo CD admin password
+# # Function to get the Argo CD admin password
 function get_argo_cd_password() {
     # Loop until the password is retrieved
     while true; do
