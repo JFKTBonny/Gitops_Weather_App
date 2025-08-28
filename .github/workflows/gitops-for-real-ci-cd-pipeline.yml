@@ -98,11 +98,11 @@ jobs:
             --reconfigure
         working-directory: ${{ github.workspace }}/terraform
 
-      - name: Download Terraform Plan
-        uses: actions/download-artifact@v4
-        with:
-          name: weather-app-tf.plan
-          path: ${{ github.workspace }}/terraform
+      # - name: Download Terraform Plan
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: weather-app-tf.plan
+      #     path: ${{ github.workspace }}/terraform
 
       
       - name: Apply Terraform Plan
