@@ -7,7 +7,7 @@ EXTERNAL_IP=""
 
 # Loop until the external IP is assigned and DNS resolves
 while true; do
-    # Get the hostname from the service
+    # # Get the hostname from the service
     EXTERNAL_IP=$(kubectl get service "$SERVICE_NAME" -n "$NAMESPACE" -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 
     if [ -n "$EXTERNAL_IP" ]; then

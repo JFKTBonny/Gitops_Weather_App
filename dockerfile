@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 80
 
 # Define environment variable to store the API key
-ENV WEATHER_API_KEY=NOT_VALID_KEY
+ENV WEATHER_API_KEY=25f034b3bdb54e47853192450252808
 
 # Run app.py when the container launches
 CMD ["python", "backend-api.py"]
