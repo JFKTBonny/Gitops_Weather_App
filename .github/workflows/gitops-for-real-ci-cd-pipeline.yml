@@ -18,54 +18,54 @@ env:
   
 
 jobs:
-  terraform-plan:
-    name: 'Terraform Plan'
-    runs-on: ubuntu-latest
+  # terraform-plan:
+  #   name: 'Terraform Plan'
+  #   runs-on: ubuntu-latest
     
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v3
+  #       with:
+  #         terraform_version: ${{ env.TERRAFORM_VERSION }}
 
         
 
-      - name: Terraform Init
-        run: |
-          terraform init \
-            -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
-            -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
-            -backend-config="region=${{ secrets.AWS_REGION }}" \
-            --reconfigure
-        working-directory: ${{ github.workspace }}/terraform
+  #     - name: Terraform Init
+  #       run: |
+  #         terraform init \
+  #           -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
+  #           -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+  #           -backend-config="region=${{ secrets.AWS_REGION }}" \
+  #           --reconfigure
+  #       working-directory: ${{ github.workspace }}/terraform
 
-      - name: Terraform Plan
-        id: tf-plan      
-        run: |
-          export exitcode=0
-          terraform plan -detailed-exitcode -no-color -out=weather-app-tf.plan || export exitcode=$?
-          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
-          if [ $exitcode -eq 1 ]; then
-            echo "Terraform Plan Failed!"
-            exit 1
-          fi
-        working-directory: ${{ github.workspace }}/terraform
+  #     - name: Terraform Plan
+  #       id: tf-plan      
+  #       run: |
+  #         export exitcode=0
+  #         terraform plan -detailed-exitcode -no-color -out=weather-app-tf.plan || export exitcode=$?
+  #         echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+  #         if [ $exitcode -eq 1 ]; then
+  #           echo "Terraform Plan Failed!"
+  #           exit 1
+  #         fi
+  #       working-directory: ${{ github.workspace }}/terraform
 
-      - name: Publish Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: weather-app-tf.plan
-          path: ${{ github.workspace }}/terraform
+  #     - name: Publish Terraform Plan
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: weather-app-tf.plan
+  #         path: ${{ github.workspace }}/terraform
           
 
   terraform-apply:
