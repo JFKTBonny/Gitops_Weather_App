@@ -6,7 +6,7 @@ NAMESPACE="argocd"
 # Define the name of the secret where the initial password is stored
 SECRET_NAME="argocd-initial-admin-secret"
 
-# Initialize ARGO_CD_PASSWORD variable
+# # Initialize ARGO_CD_PASSWORD variable
 ARGO_CD_PASSWORD=""
 
 # Function to get the Argo CD admin password
