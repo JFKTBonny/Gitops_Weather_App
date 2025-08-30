@@ -49,6 +49,10 @@ jobs:
             -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
             -backend-config="region=${{ secrets.AWS_REGION }}" \
             --reconfigure
+        working-directory: ${{ github.workspace }}/terraform  
+
+      - name: Terraform fmt
+        run: terraform fmt 
         working-directory: ${{ github.workspace }}/terraform    
 
       - name: Terraform fmt check
