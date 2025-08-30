@@ -4,7 +4,7 @@ metadata:
   name: backend-api-weather-app
   namespace: weather-app-for-real
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       app: backend-api-weather-app
