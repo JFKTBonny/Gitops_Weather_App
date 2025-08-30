@@ -1,0 +1,76 @@
+name: 'Terraform Plan/Apply on AWS'
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  ENVIRONMENT: dev
+  TERRAFORM_VERSION: 1.8.3
+
+concurrency:
+  group: terraform-apply-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - run: terraform init \
+          -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
+          -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+          -backend-config="region=${{ secrets.AWS_REGION }}" \
+          --reconfigure
+        working-directory: terraform
+      - run: terraform fmt -check
+        working-directory: terraform
+      - run: terraform validate
+        working-directory: terraform
+      - id: tf-plan
+        run: |
+          terraform plan -detailed-exitcode -out=weather-app-tf.plan -no-color || rc=$?
+          echo "exitcode=${rc:-0}" >> $GITHUB_OUTPUT
+        working-directory: terraform
+      - uses: actions/upload-artifact@v4
+        with:
+          name: weather-app-tf.plan
+          path: terraform/weather-app-tf.plan
+
+  terraform-apply:
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - run: terraform init \
+          -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
+          -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+          -backend-config="region=${{ secrets.AWS_REGION }}" \
+          --reconfigure
+        working-directory: terraform
+      - uses: actions/download-artifact@v4
+        with:
+          name: weather-app-tf.plan
+          path: terraform
+      - run: terraform apply -auto-approve weather-app-tf.plan
+        working-directory: terraform
