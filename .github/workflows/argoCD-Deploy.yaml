@@ -69,7 +69,7 @@ jobs:
 
           # Login using argocd CLI
           echo "Logging in to ArgoCD server https://$EXTERNAL_IP ..."
-          argocd login https://$EXTERNAL_IP --username admin --password $PASSWORD --insecure
+          argocd login $EXTERNAL_IP --username admin --password $PASSWORD --insecure
 
       # Add Git repo to ArgoCD
       - name: Add ArgoCD Git Repo
