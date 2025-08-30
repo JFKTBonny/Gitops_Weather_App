@@ -19,7 +19,7 @@ env:
 
 concurrency:
   group: terraform-apply-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   terraform-plan:
