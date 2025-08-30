@@ -75,8 +75,4 @@ resource "aws_iam_role_policy_attachment" "worker-node-ecr" {
   role       = aws_iam_role.eks-worker-role.name
 }
 
-resource "aws_iam_instance_profile" "worker-node-profile" {
-  name = "eks-worker-node-profile"
-  role = aws_iam_role.eks-worker-role.name
-}
 
