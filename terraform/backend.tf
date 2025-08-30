@@ -3,7 +3,7 @@ terraform {
     bucket = "bonny1203"
     key    = "gitops-weather-app/dev/terraform.tfstate"
     region = "us-east-1"
-    dynamodb_table = "terraform-locks"
+    
   }
 }
 
