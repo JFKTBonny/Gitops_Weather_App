@@ -2,6 +2,10 @@ name: 'Terraform Destroy'
 on:
   workflow_dispatch:
 
+env:
+  ENVIRONMENT: dev
+  TERRAFORM_VERSION: 1.8.3 
+
 jobs:
   terraform-destroy:
     runs-on: ubuntu-latest
