@@ -146,6 +146,15 @@ jobs:
         with:
           token: ${{ secrets.REPO_TOKEN }}
 
+      - name: Get short SHA
+        id: vars
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      # Use the short SHA in the next steps like this:
+      - name: Use short SHA
+        run: echo "Short SHA is ${{ env.SHORT_SHA }}"
+    
+
       - name: Build and Push
         uses: docker/build-push-action@v5
         with:
