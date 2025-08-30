@@ -42,6 +42,15 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
 
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
+            -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+            -backend-config="region=${{ secrets.AWS_REGION }}" \
+            --reconfigure
+        working-directory: ${{ github.workspace }}/terraform    
+
       - name: Terraform fmt check
         run: terraform fmt -check
         working-directory: ${{ github.workspace }}/terraform
@@ -50,14 +59,7 @@ jobs:
         run: terraform validate
         working-directory: ${{ github.workspace }}/terraform
 
-      - name: Terraform Init
-        run: |
-          terraform init \
-            -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
-            -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
-            -backend-config="region=${{ secrets.AWS_REGION }}" \
-            --reconfigure
-        working-directory: ${{ github.workspace }}/terraform
+      
 
       - name: Terraform Plan
         id: tf-plan
