@@ -111,7 +111,7 @@ jobs:
             -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
             -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
             -backend-config="region=${{ secrets.AWS_REGION }}" \
-            --reconfigure
+            
         working-directory: ${{ github.workspace }}/terraform
 
       - name: Download Terraform Plan Artifact
