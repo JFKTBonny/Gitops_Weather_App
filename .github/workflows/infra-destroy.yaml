@@ -15,10 +15,13 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.8.3
-      - run: terraform init \
-          -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
-          -backend-config="key=gitops-weather-app/dev/terraform.tfstate" \
-          -backend-config="region=${{ secrets.AWS_REGION }}" --reconfigure
-        working-directory: ./terraform
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.BACKEND_BUCKET }}" \
+            -backend-config="key=gitops-weather-app/${{ env.ENVIRONMENT }}/terraform.tfstate" \
+            -backend-config="region=${{ secrets.AWS_REGION }}" \
+            --reconfigure
+        working-directory: ${{ github.workspace }}/terraform
       - run: terraform destroy -auto-approve
         working-directory: ./terraform
