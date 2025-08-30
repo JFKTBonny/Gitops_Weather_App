@@ -21,7 +21,7 @@ resource "aws_eks_node_group" "eks-cluster-node-group" {
     ignore_changes  = [scaling_config] # ignore size changes if you scale outside Terraform
   }
 
-  # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
+  #  Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
   depends_on = [
     aws_iam_role_policy_attachment.worker-node-policy,
@@ -75,8 +75,8 @@ resource "aws_iam_role_policy_attachment" "worker-node-ecr" {
   role       = aws_iam_role.eks-worker-role.name
 }
 
-# resource "aws_iam_instance_profile" "worker-node-profile" {
-#   name = "eks-worker-node-profile"
-#   role = aws_iam_role.eks-worker-role.name
-# }
+resource "aws_iam_instance_profile" "worker-node-profile" {
+  name = "eks-worker-node-profile"
+  role = aws_iam_role.eks-worker-role.name
+}
 
