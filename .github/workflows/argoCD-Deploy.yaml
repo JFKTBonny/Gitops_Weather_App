@@ -59,8 +59,17 @@ jobs:
 
       # Login to ArgoCD
       - name: Login to ArgoCD
+        shell: bash
         run: |
-          argocd login $EXTERNAL_IP --username admin --password $ARGO_CD_PASSWORD --insecure
+          # Get the ArgoCD External IP
+          EXTERNAL_IP=$(kubectl get svc argocd-server -n argocd -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+
+          # Get the initial admin password from Kubernetes secret
+          PASSWORD=$(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode)
+
+          # Login using argocd CLI
+          echo "Logging in to ArgoCD server https://$EXTERNAL_IP ..."
+          argocd login https://$EXTERNAL_IP --username admin --password $PASSWORD --insecure
 
       # Add Git repo to ArgoCD
       - name: Add ArgoCD Git Repo
