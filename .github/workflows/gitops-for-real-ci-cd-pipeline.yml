@@ -139,25 +139,33 @@ jobs:
         with:
           token: ${{ secrets.REPO_TOKEN }}
 
+      - name: Get short SHA
+        id: vars
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      # Use the short SHA in the next steps like this:
+      - name: Use short SHA
+        run: echo "Short SHA is ${{ env.SHORT_SHA }}"    
+
       - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           push: true
           context: .
           file: Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:v${{ github.sha.substring(0, 7) }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:v${{ env.SHORT_SHA }}
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:cache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:cache,mode=max
 
       - name: Update Kubernetes Manifests (if changes)
         run: |
           cd ./deployment
-          sed -i 's|image: .*$|image: ${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:v${{ github.sha.substring(0, 7) }}|' backend-api-deployment.yaml
+          sed -i 's|image: .*$|image: ${{ secrets.DOCKERHUB_USERNAME }}/weather-app-backend-api:v${{ env.SHORT_SHA }}|' backend-api-deployment.yaml
 
           if [[ -n "$(git status --porcelain)" ]]; then
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            git commit -am "Update image tag to v${{ github.sha.substring(0, 7) }}"
+            git commit -am "Update image tag to v${{ env.SHORT_SHA }}"
             git push
           else
             echo "No changes to commit"
